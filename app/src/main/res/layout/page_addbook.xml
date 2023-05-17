@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:descendantFocusability="beforeDescendants"
+    android:background="@color/white"
+    android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/topTitleSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="15dp"
+        android:background="@drawable/details_topsection"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular"
+            android:text="Add new story"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:layout_marginStart="5dp"/>
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/add_cover"
+                android:layout_width="306px"
+                android:layout_height="459px"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="35dp"
+                android:src="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textPublishBook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:fontFamily="@font/inter_regular"
+                android:text="+ Publish book"
+                android:textColor="@color/dark_purple"
+                android:textSize="15sp"
+                app:layout_constraintStart_toEndOf="@+id/add_cover"
+                app:layout_constraintTop_toTopOf="@id/add_cover" />
+
+            <TextView
+                android:id="@+id/addCover"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Add Cover"
+                android:textColor="@color/dark_purple"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/add_cover" />
+
+            <TextView
+                android:id="@+id/titletxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Title"
+                android:textColor="@color/black"
+                android:fontFamily="@font/inter_regular"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.143"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/addCover" />
+
+            <EditText
+                android:id="@+id/editInputTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="15"
+                android:singleLine="true"
+                android:scrollHorizontally="true"
+                android:maxLength="100"
+                android:textColor="@color/black"
+                android:backgroundTint="@color/black"
+                app:layout_constraintStart_toStartOf="@id/titletxt"
+                app:layout_constraintTop_toBottomOf="@+id/titletxt" />
+
+            <TextView
+                android:id="@+id/desctxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Book description"
+                android:textColor="@color/black"
+                android:fontFamily="@font/inter_regular"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="@id/editInputTitle"
+                app:layout_constraintTop_toBottomOf="@id/editInputTitle" />
+
+            <EditText
+                android:id="@+id/editInputDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="15"
+                android:textColor="@color/black"
+                android:backgroundTint="@color/black"
+                app:layout_constraintStart_toStartOf="@id/desctxt"
+                app:layout_constraintTop_toBottomOf="@+id/desctxt" />
+            <LinearLayout
+                android:id="@+id/middleChapterSection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/gray"
+                android:includeFontPadding="false"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editInputDesc"
+                android:orientation="vertical"
+                android:gravity="center">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CHAPTER"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:includeFontPadding="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:textSize="14sp"/>
+                    <EditText
+                        android:id="@+id/editInputChapter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="....."
+                        android:layout_marginLeft="5dp"
+                        android:background="@android:color/transparent"
+                        android:includeFontPadding="false"
+                        android:textStyle="bold"
+                        android:inputType="number"
+                        android:textSize="14sp"
+                        android:textColorHint="@color/black"
+                        android:fontFamily="@font/inter_regular"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <EditText
+                        android:id="@+id/editInputChapterTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="CHAPTER NAME"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/inter_regular"
+                        android:includeFontPadding="false"
+                        android:textColorHint="@color/gray"/>
+                </LinearLayout>
+            </LinearLayout>
+            <EditText
+                android:id="@+id/editInputStory"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColorHint="@color/gray"
+                android:focusedByDefault="false"
+                android:focusableInTouchMode="true"
+                android:textColor="@color/black"
+                android:hint="Write your story here..."
+                android:textSize="14sp"
+                android:inputType="textMultiLine"
+                android:backgroundTint="@android:color/transparent"
+                app:layout_constraintEnd_toEndOf="@id/editInputDesc"
+                app:layout_constraintStart_toStartOf="@id/editInputDesc"
+                app:layout_constraintTop_toBottomOf="@+id/middleChapterSection" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</LinearLayout>

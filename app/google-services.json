@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1006358916349",
+    "project_id": "pustaku",
+    "storage_bucket": "pustaku.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1006358916349:android:9178daf7cf01c78421e294",
+        "android_client_info": {
+          "package_name": "com.example.pustaku"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1006358916349-ev3gugspcq8tijekadj63gufkvqugq98.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCbKd4LvalHOvCXTfy-Ws0X8i4Rd2_jOs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1006358916349-ev3gugspcq8tijekadj63gufkvqugq98.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

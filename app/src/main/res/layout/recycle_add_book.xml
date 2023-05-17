@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/constraintAddPage"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="15dp">
+    <ImageView
+        android:id="@+id/imageSetBookCoverAdd"
+        android:layout_width="140dp"
+        android:layout_height="200dp"
+        android:src="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+    <TextView
+        android:id="@+id/textSetBookTitleAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Book Title"
+        android:fontFamily="@font/inter_regular"
+        android:textSize="18sp"
+        android:maxLines="2"
+        android:textColor="@color/black"
+        android:layout_marginLeft="25dp"
+        app:layout_constraintStart_toEndOf="@id/imageSetBookCoverAdd"
+        app:layout_constraintTop_toTopOf="@id/imageSetBookCoverAdd"/>
+    <TextView
+        android:id="@+id/textSetBookDescriptionAdd"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="Book Desc"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:maxLength="200"
+        android:textSize="14dp"
+        android:fontFamily="@font/inter_regular"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/textIntentEdit"
+        app:layout_constraintStart_toStartOf="@id/textSetBookTitleAdd"
+        app:layout_constraintTop_toBottomOf="@id/textSetBookTitleAdd"/>
+    <TextView
+        android:id="@+id/textIntentEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit Story"
+        android:textSize="14sp"
+        android:fontFamily="@font/inter_regular"
+        android:textColor="@color/dark_purple"
+        app:layout_constraintBottom_toBottomOf="@id/imageSetBookCoverAdd"
+        app:layout_constraintStart_toStartOf="@id/textSetBookTitleAdd"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
