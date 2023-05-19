@@ -6,15 +6,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.pustaku.R
-import com.example.pustaku.`object`.books
 import com.example.pustaku.activity.PageSearch
 import com.example.pustaku.adapters.RecycleBestSellerAdapter
 import com.example.pustaku.data.Books
@@ -36,8 +33,8 @@ class HomePage : Fragment() {
     private var param2: String? = null
 
     private lateinit var bestSellerRV : RecyclerView
-    private lateinit var continueReadingRV : RecyclerView
-    private lateinit var top10RV : RecyclerView
+    private lateinit var newestReadingRV : RecyclerView
+    private lateinit var reccomendRV : RecyclerView
     private lateinit var bookList : ArrayList<Books>
     private lateinit var recommend : ArrayList<Books>
     private lateinit var newest : ArrayList<Books>
@@ -92,20 +89,22 @@ class HomePage : Fragment() {
         newest = arrayListOf(Books())
         recommend = arrayListOf(Books())
         bestSellerRV = view.findViewById(R.id.recycleviewBestSeller)
-        continueReadingRV = view.findViewById(R.id.recycleviewContinue)
-        top10RV = view.findViewById(R.id.recycleviewTopIndonesian)
+        newestReadingRV = view.findViewById(R.id.recycleviewContinue)
+        reccomendRV = view.findViewById(R.id.recycleviewTopIndonesian)
 
         //RecycleView for Best Seller
         bestSellerRV.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         bestSellerRV.setHasFixedSize(true)
 
-        //RecycleView for Continue Reading
-        continueReadingRV.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        continueReadingRV.setHasFixedSize(true)
+        //RecycleView for Continue
+        newestReadingRV.layoutManager =  LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false).also {
+            it.setReverseLayout(true)
+            it.setStackFromEnd(true) }
+        newestReadingRV.setHasFixedSize(true)
 
         //RecycleView for Top 10
-        top10RV.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        top10RV.setHasFixedSize(true)
+        reccomendRV.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        reccomendRV.setHasFixedSize(true)
 
         //REFRESH
         refresh = view.findViewById(R.id.refreshLayoutHome)
@@ -119,14 +118,13 @@ class HomePage : Fragment() {
         //HIDING LAYOUT BECAUSE NO DATA
         progBar.visibility = View.VISIBLE
         bestSellerRV.visibility = View.INVISIBLE
-        continueReadingRV.visibility = View.INVISIBLE
-        top10RV.visibility = View.INVISIBLE
-        top10RV.visibility = View.INVISIBLE
+        newestReadingRV.visibility = View.INVISIBLE
+        reccomendRV.visibility = View.INVISIBLE
         //GETTING DATA FROM BOOK FIELD
         val dbRef = FirebaseDatabase.getInstance().getReference("Book").orderByChild("title")
         //GETTING DATA FROM FIREBASE FIELD BOOK USING FILTER FROM recommend
         val newestData = FirebaseDatabase.getInstance().getReference("Book").orderByChild("releaseDate")
-        //GETTING DATA FROM FIREBASE FIELD BOOK USING FILTER FROM booktext
+        //GETTING DA.TA FROM FIREBASE FIELD BOOK USING FILTER FROM booktext
         val recommendData = FirebaseDatabase.getInstance().getReference("Book").orderByChild("recommend").equalTo(true)
 
         //RECYCLE VIEW DATA FOR ALL
@@ -138,7 +136,8 @@ class HomePage : Fragment() {
                         val bookData = bookSnap.getValue(Books::class.java)
                         bookList.add(bookData!!)
                     }
-                    val recycleBestSelleradapter = context?.let { RecycleBestSellerAdapter(bookList, it) }
+                    bookList.shuffle()
+                    val recycleBestSelleradapter = context?.let { RecycleBestSellerAdapter(bookList , it) }
                     bestSellerRV.adapter = recycleBestSelleradapter
 
                     //RECYCLE VIEW DATA FOR NEWEST BOOK
@@ -150,10 +149,10 @@ class HomePage : Fragment() {
                                     val bookData = bookSnap.getValue(Books::class.java)
                                     newest.add(bookData!!)
                                 }
-                                val recycleContinueadapter = context?.let { RecycleBestSellerAdapter(newest, it) }
-                                continueReadingRV.adapter = recycleContinueadapter
+                                val recycleNewestadapter = context?.let { RecycleBestSellerAdapter(newest, it) }
+                                newestReadingRV.adapter = recycleNewestadapter
                                 progBar.visibility = View.GONE
-                                continueReadingRV.visibility = View.VISIBLE
+                                newestReadingRV.visibility = View.VISIBLE
                             }
                         }
                         override fun onCancelled(error: DatabaseError) {
@@ -170,10 +169,10 @@ class HomePage : Fragment() {
                                     val bookData = bookSnap.getValue(Books::class.java)
                                     recommend.add(bookData!!)
                                 }
-                                val recycleTop10adapter = context?.let { RecycleBestSellerAdapter(recommend, it) }
-                                top10RV.adapter = recycleTop10adapter
+                                val recycleReccomendadapter = context?.let { RecycleBestSellerAdapter(recommend, it) }
+                                reccomendRV.adapter = recycleReccomendadapter
                                 progBar.visibility = View.GONE
-                                top10RV.visibility = View.VISIBLE
+                                reccomendRV.visibility = View.VISIBLE
                             }
                         }
                         override fun onCancelled(error: DatabaseError) {

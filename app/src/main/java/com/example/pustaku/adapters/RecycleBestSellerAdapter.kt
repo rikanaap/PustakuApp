@@ -13,7 +13,7 @@ import com.example.pustaku.activity.PageDetailBook
 import com.example.pustaku.data.Books
 import com.squareup.picasso.Picasso
 
-class RecycleBestSellerAdapter(private val books : ArrayList<Books>, private val context : Context): RecyclerView.Adapter<RecycleBestSellerAdapter.ViewHolder>() {
+class RecycleBestSellerAdapter(private val books : ArrayList<Books>, private val context: Context): RecyclerView.Adapter<RecycleBestSellerAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recycle_book, parent, false)
         return ViewHolder(view)

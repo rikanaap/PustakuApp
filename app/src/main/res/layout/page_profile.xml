@@ -33,7 +33,7 @@
             android:id="@+id/imageSetProfile"
             android:layout_width="110dp"
             android:layout_height="110dp"
-            android:src="@drawable/empty_profile"
+            android:src="@color/black"
             android:scaleType="centerCrop"
             android:layout_marginTop="50dp"
             app:layout_constraintTop_toBottomOf="@id/topTitleSection"
@@ -80,18 +80,6 @@
                 android:backgroundTint="@color/black"
                 android:textColorHint="@color/gray"
                 android:layout_height="wrap_content"/>
-            <EditText
-                android:id="@+id/editInputPasswordEdit"
-                android:layout_gravity="center"
-                android:hint="Edit Password"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:layout_marginTop="20dp"
-                android:fontFamily="@font/inter_regular"
-                android:backgroundTint="@color/black"
-                android:textColorHint="@color/gray"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"/>
         </LinearLayout>
         <CheckBox
             android:id="@+id/checkboxInputEnable"

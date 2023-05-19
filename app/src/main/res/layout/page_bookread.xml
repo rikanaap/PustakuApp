@@ -36,7 +36,7 @@
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:scrollHorizontally="true"
-                android:maxLength="50"
+                android:maxLength="100"
                 android:textColor="@color/black"
                 android:fontFamily="@font/inter_regular"
                 android:textSize="14sp"/>
@@ -76,6 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
+                    android:maxLength="3"
                     android:textColor="@color/black"
                     android:layout_marginLeft="5dp"
                     android:fontFamily="@font/inter_regular"
@@ -87,6 +88,9 @@
                 android:layout_height="wrap_content"
                 android:text="Chapter Title"
                 android:textAllCaps="true"
+                android:gravity="center"
+                android:maxLines="3"
+                android:maxLength="100"
                 android:textColor="@color/black"
                 android:fontFamily="@font/inter_regular"
                 android:textSize="14sp"/>

@@ -1,7 +1,7 @@
 package com.example.pustaku.activity
 
-import android.app.Activity
 import android.app.ProgressDialog
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -18,19 +18,20 @@ import androidx.core.view.isVisible
 import com.example.pustaku.R
 import com.example.pustaku.data.Permission
 import com.example.pustaku.data.Users
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import com.yalantis.ucrop.UCrop
 import de.hdodenhof.circleimageview.CircleImageView
-import org.w3c.dom.Text
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class PageProfile : AppCompatActivity() {
     private lateinit var checkbox : CheckBox
@@ -41,9 +42,9 @@ class PageProfile : AppCompatActivity() {
     private lateinit var gambarSet : ImageView
     private lateinit var textFoto : TextView
     private lateinit var editUsername : EditText
-    private lateinit var editPassword : EditText
     private lateinit var profilePhoto : CircleImageView
     private lateinit var saveButton : Button
+    private lateinit var progress : ProgressBar
     private lateinit var cropActivityResultLauncher : ActivityResultLauncher<Any?>
 
     //FOR DATA
@@ -53,6 +54,8 @@ class PageProfile : AppCompatActivity() {
     private lateinit var email : String
     private lateinit var password : String
     private lateinit var level : String
+    private lateinit var userId : String
+    private lateinit var profileId : String
 
     //Pick date, uses for Update
     private val formatter = SimpleDateFormat("dd-MM-yyyy_HH:mm:ss", Locale.getDefault())
@@ -82,13 +85,21 @@ class PageProfile : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.page_profile)
+
         //SETTING VIEW
         textUsername = findViewById(R.id.textSetUsername)
         editUsername = findViewById(R.id.editInputUsernameEdit)
-        editPassword = findViewById(R.id.editInputPasswordEdit)
         checkbox = findViewById(R.id.checkboxInputEnable)
         saveButton = findViewById(R.id.buttonSaveProfile)
         profilePhoto = findViewById(R.id.imageSetProfile)
+        progress = findViewById(R.id.progresBarProfile)
+
+        //ON ACTIVITY START
+        progress.visibility = View.VISIBLE
+        editUsername.visibility = View.GONE
+        checkbox.visibility = View.GONE
+        saveButton.visibility = View.GONE
+        profilePhoto.visibility = View.GONE
 
         //CHANGE PROFILE PICTURE
         cropActivityResultLauncher = registerForActivityResult(cropActivityResultContext) {
@@ -101,14 +112,25 @@ class PageProfile : AppCompatActivity() {
             cropActivityResultLauncher.launch(null)
         }
 
+        //WHEN CHECKBOX CLICK
+        checkbox.setOnClickListener {
+            if (checkbox.isChecked) {
+                checkbox.toggle() //REMOVE CHECKED IN CHECKBOX
+                openDialog(userId, email)
+            } else {
+                checkbox.toggle()
+            }
+        }
+
         //GETTING USER ID FROM FIREBASE AUTH
         firebaseAuth = FirebaseAuth.getInstance()
-        val userId: String = firebaseAuth.currentUser!!.uid
+        userId = firebaseAuth.currentUser!!.uid
 
         //INSERTING USER ID TO MATCHING DATA IN USER DATABASE
         UserdbRef = FirebaseDatabase.getInstance().getReference("User")
         PermissiondbRef = FirebaseDatabase.getInstance().getReference("Permission")
 
+        getUserData()
         //GETTING PERMISSION ALREADYASKING FROM PERMISSION FIELD (USES TO HIDE SENDING PERMISSION REPEATLY)
         val getAlreadyAsking = PermissiondbRef.child(userId).child("alreadyAsking").get().addOnSuccessListener {
             if(it.value == "noSend"){
@@ -120,105 +142,120 @@ class PageProfile : AppCompatActivity() {
             Log.e("firebase", "Error getting data", it)
         }
 
-        //GETTING USER LEVEL FROM USER FIELD
-        val getLevel = UserdbRef.child(userId).child("userLevel").get().addOnSuccessListener {
-            level = it.value.toString()
-            if(level.equals("2")){
-                checkbox.visibility = View.GONE
-            }else{
-                checkbox.visibility = View.VISIBLE
-            }
-        }.addOnFailureListener {
-            Log.e("firebase", "Error getting data", it)
-        }
-
-        //GETTING USER USERNAME FROM USER FIELD
-        val getUsername = UserdbRef.child(userId).child("userUsername").get().addOnSuccessListener {
-            username = it.value as String
-            textUsername.setText("@$username")
-            editUsername.setText(username)
-        }.addOnFailureListener {
-            Log.e("firebase", "Error getting data", it)
-        }
-
-        //GETTING USER PASSWORD FROM USER FIELD
-        val getPassword = UserdbRef.child(userId).child("userPassword").get().addOnSuccessListener {
-            password = it.value as String
-            editPassword.setText(password)
-        }.addOnFailureListener {
-            Log.e("firebase", "Error getting data", it)
-        }
-
-        //GETTING USER EMAIL FROM USER FIELD
-        val getEmail = UserdbRef.child(userId).child("userEmail").get().addOnSuccessListener {
-            email = it.value as String
-            //WHEN CHECKBOX CLICK
-            checkbox.setOnClickListener {
-                if (checkbox.isChecked) {
-                    checkbox.toggle() //REMOVE CHECKED IN CHECKBOX
-                    openDialog(userId, email)
-                } else {
-                    checkbox.toggle()
-                }
-            }
-        }
-
-        //GETTING USER PROFILE PHOTO FROM USER FIELD
-        val getProfilePhoto = UserdbRef.child(userId).child("userProfilePhoto").get().addOnSuccessListener {
-                if (it.value != null) {
-                    val imgLink = "https://firebasestorage.googleapis.com/v0/b/pustaku.appspot.com/o/images%2F${it.value}?alt=media&token=be406d30-7a24-4107-bc02-db83067a66e7"
-                    Picasso.get().load(imgLink).placeholder(R.color.black).into(profilePhoto)
-                }else{
-                    profilePhoto.setImageResource(R.drawable.empty_profile)
-                }
-            }.addOnFailureListener {
-            Log.e("firebase", "Error getting data", it)
-        }
-
         saveButton.setOnClickListener {
+            //PICKING DATA FROM USER INPUT
             val updateUsername = editUsername.text.toString()
-            val updatePassword = editPassword.text.toString()
+            val uriProfile = profileUri
             //GETTING PROFILE ID
-            val profileId = "$userId-$date-user"
-            val userUpdate = Users(userId, updateUsername, email, updatePassword, level.toInt(), profileId)
+            val updateProfileId = "$userId-$date-user"
+            val userUpdate = Users(userId, updateUsername, email, password , level.toInt(), updateProfileId)
+
 
             //UPLOAD PROFILE PICT TO FIREBASE STORAGE
             fun uploadProfile(onComplete: () -> Unit) {
-                val storageReference = FirebaseStorage.getInstance().getReference("images/$profileId")
-                if (profileUri != null) {
-                    storageReference.putFile(profileUri!!)
+                val storageReference = FirebaseStorage.getInstance().getReference("images/$updateProfileId")
+                if (uriProfile != null) {
+                    storageReference.putFile(uriProfile)
                         .addOnSuccessListener {
-                            profileUri = null
                             profilePhoto.setImageResource(R.color.black)
                             onComplete()
                         }.addOnFailureListener {
                             Toast.makeText(this, it.message.toString(), Toast.LENGTH_SHORT).show()
                         }
                 } else {
-                    Toast.makeText(this, "Mohon masukan foto", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Mohon Masukan Gambar", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            //IF NEW PROFILE  IS UPDATE
+            fun removeFromStorage(){
+                val imgLink = "https://firebasestorage.googleapis.com/v0/b/pustaku.appspot.com/o/images%2F${profileId}?alt=media&token=be406d30-7a24-4107-bc02-db83067a66e7"
+                val deleteReference = FirebaseStorage.getInstance().getReferenceFromUrl(imgLink)
+                deleteReference.delete().addOnSuccessListener {
+                    Toast.makeText(this, "Profile Photo Updated", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener{
+                    Toast.makeText(this, "New Profile Photo", Toast.LENGTH_SHORT).show()
                 }
             }
 
             //CHECKING IF ALL FIELD IS FILL
-            if (profileUri != null && updateUsername.isNotEmpty() && updatePassword.isNotEmpty() && profileId.isNotEmpty()) {
+            if (updateUsername.isNotEmpty() && updateProfileId.isNotEmpty()) {
                 val progressDialog = ProgressDialog(this)
                 progressDialog.setMessage("Updating data....")
                 progressDialog.setCancelable(false)
                 progressDialog.show()
-
-                UserdbRef.child(userId).setValue(userUpdate).addOnCompleteListener {
+                if(uriProfile != null){
                     uploadProfile {
                         if (progressDialog.isShowing) progressDialog.dismiss()
-                        Toast.makeText(this, "Mohon tunggu....", Toast.LENGTH_SHORT).show()
-                        finish()
+                        Toast.makeText(this, "Updating Porfile", Toast.LENGTH_SHORT).show()
+                        removeFromStorage()
+                        UserdbRef.child(userId).setValue(userUpdate).addOnCompleteListener {
+                            val intent = Intent(this, PageMain::class.java)
+                            startActivity(intent)
+                        }.addOnFailureListener {
+                            Toast.makeText(this, "Error $(err.message)", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                }.addOnFailureListener {
-                    Toast.makeText(this, "Error $(err.message)", Toast.LENGTH_SHORT).show()
+                }else {
+                    if (progressDialog.isShowing) progressDialog.dismiss()
+                    UserdbRef.child(userId).setValue(userUpdate).addOnCompleteListener {
+                        val intent = Intent(this, PageMain::class.java)
+                        startActivity(intent)
+                    }.addOnFailureListener {
+                        Toast.makeText(this, "Error $(err.message)", Toast.LENGTH_SHORT).show()
+                    }
                 }
             } else {
-                Toast.makeText(this, "Please fill all field", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "No Data Change", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun getUserData() {
+        val queryUser = FirebaseDatabase.getInstance().getReference("User").child(userId)
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val user = dataSnapshot.getValue(Users::class.java)
+                Log.d("getUserData", "user: $user")
+
+                //GETTING USER DATA FROM FIREBASE
+                //DECLARATION
+                username = user?.userUsername.toString()
+                email = user?.userEmail.toString()
+                password = user?.userPassword.toString()
+                level = user?.userLevel.toString()
+                profileId = user?.userProfilePhoto.toString()
+
+                //SET TO VIEW
+                textUsername.setText("@$username")
+                editUsername.setText(username)
+
+                //IF USER LEVEL EQUAL TO 2, HIDE CHECKBOX
+                if(level.equals("2")){
+                    checkbox.visibility = View.GONE
+                }else{
+                    checkbox.visibility = View.VISIBLE
+                }
+
+                //IF USER HAS A PROFILE
+                if(profileId != null){
+                    val imgLink = "https://firebasestorage.googleapis.com/v0/b/pustaku.appspot.com/o/images%2F${profileId}?alt=media&token=be406d30-7a24-4107-bc02-db83067a66e7"
+                    Picasso.get().load(imgLink).placeholder(R.color.black).into(profilePhoto)
+                }else{}
+                //ON ALL INPUT ALREADY SET
+                progress.visibility = View.GONE
+                editUsername.visibility = View.VISIBLE
+                checkbox.visibility = View.VISIBLE
+                saveButton.visibility = View.VISIBLE
+                profilePhoto.visibility = View.VISIBLE
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e(ContentValues.TAG, "Error fetching user", databaseError.toException())
+            }
+        }
+        queryUser.addListenerForSingleValueEvent(userListener)
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

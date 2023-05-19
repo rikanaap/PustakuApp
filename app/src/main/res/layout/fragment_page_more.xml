@@ -40,19 +40,20 @@
             android:layout_height="110dp"
             android:layout_marginTop="50dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/empty_profile"
+            android:src="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/topTitleSection" />
 
         <TextView
             android:id="@+id/textSetUsername"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/inter_regular"
             android:textColor="@color/black"
-            android:text="\@username"
+            android:text=""
+            android:maxLength="15"
             android:gravity="center"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@id/imageSetProfile"

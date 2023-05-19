@@ -36,7 +36,7 @@
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:scrollHorizontally="true"
-                android:maxLength="50"
+                android:maxLength="100"
                 android:textColor="@color/black"
                 android:fontFamily="@font/inter_regular"
                 android:textSize="14sp"/>
